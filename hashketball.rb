@@ -128,71 +128,75 @@ def game_hash
 end
 
 def player_index
-  game_hash[:home][:players][0,5].concat(game_hash[:away][:players][0,5])
+  game_hash[:home][:players][0, 5].concat(game_hash[:away][:players][0, 5])
 end
 
-def num_points_scored (name)
+def num_points_scored (player_name)
   player_index.each do |stats|
-    if stats[:player_name] == name
+    if stats[:player_name] == player_name
       return stats[:points]
     end
   end
 end
 
-def shoe_size (name)
-  player_index.each do |stats|
-    if stats[:player_name] == name
-      return stats[:shoe]
+def shoe_size (player_name)
+  game_hash.each do |key, value|
+    value[:players].each do |stats|
+      if stats[:player_name] == player_name
+        return stats[:shoe]
+      end
     end
   end
 end
 
-def team_colors (team)
+def team_colors (team_name)
   game_hash.each do |key, value|
-    if value[:team_name] == team
+    if value[:team_name] == team_name
       return value[:colors]
     end
   end
 end
 
 def team_names
-  team_array = []
-  team_array.push(game_hash[:home][:team_name])
-  team_array.push(game_hash[:away][:team_name])
-  team_array
+  team_names = []
+  game_hash.each do |key, value|
+    team_names << value[:team_name]
+  end
+  team_names
 end
 
 def player_numbers (team_name)
-  team_numbers = []
+  player_numbers = []
   game_hash.each do |key, value|
     if value[:team_name] == team_name
-      value[:players].each do |inner_keys|
-        team_numbers.push(inner_keys[:number])
+      value[:players].each do |stats|
+        player_numbers << stats[:number]
       end
     end
   end
-  team_numbers
+  player_numbers
 end
 
-def player_stats (name)
-  player_index.each do |stats|
-    if stats[:player_name] == name
-      return stats
+def player_stats (player_name)
+  game_hash.each do |key, value|
+    value[:players].each do |stats|
+      if stats[:player_name] == player_name
+        return stats
+      end
     end
   end
 end
-
 
 def big_shoe_rebounds
-  big_foot = 0
-  big_rebounds = ""
-  game_hash.each do |home_away, info|
-    info[:players].each do |stats|
-      if stats[:shoe] > big_foot
-        big_foot = stats[:shoe]
-        big_rebounds = stats[:rebounds]
+  largest_shoe = 0
+  shoe_rebounds = 0
+  game_hash.each do |key, value|
+    value[:players].each do |stats|
+      if stats[:shoe] > largest_shoe
+        largest_shoe = stats[:shoe]
+        shoe_rebounds = stats[:rebounds]
       end
     end
   end
-  big_rebounds
+  shoe_rebounds
 end
